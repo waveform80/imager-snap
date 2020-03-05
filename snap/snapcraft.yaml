@@ -10,7 +10,7 @@ confinement: strict
 
 apps:
   imager:
-    command: bin/desktop-launch imagingutility
+    command: bin/desktop-launch rpi-imager
     plugs:
       - x11
       - opengl
@@ -21,7 +21,6 @@ apps:
       - removable-media
       - mount-observe
       - network-manager
-      - raw-usb # may not be needed
       - block-devices # required for lsblk
       - udisks2 # required for writing to sd card
 
