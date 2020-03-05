@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Imager
+Comment=Raspberry Pi Imager
+Icon=${SNAP}/meta/gui/imager.png
+Exec=imager
+Categories=Utility
+StartupNotify=false

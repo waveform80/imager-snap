@@ -1,0 +1,95 @@
+name: imager
+base: core18
+adopt-info: imagewriter
+summary: Raspberry Pi Imaging Utility
+description: |
+  Use Raspberry Pi Imager for an easy way to install Raspbian and other operating systems to an SD card ready to use with your Raspberry Pi:
+
+grade: stable
+confinement: strict
+
+apps:
+  imager:
+    command: bin/desktop-launch imagingutility
+    plugs:
+      - x11
+      - opengl
+      - network
+      - desktop
+      - desktop-legacy
+      - home
+      - removable-media
+      - mount-observe
+      - network-manager
+      - raw-usb # may not be needed
+      - block-devices # required for lsblk
+      - cifs-mount # required for umounting sd card
+
+parts:
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 # for loading icon themes which are svg
+      - try: [appmenu-qt5] # not available on core18
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+  imagewriter:
+    plugin: cmake
+    source: https://github.com/raspberrypi/imagewriter.git
+    source-type: git
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(git rev-parse --short HEAD)"
+    stage-packages:
+      - qml-module-qtquick2
+      - qml-module-qtquick-controls2
+      - qml-module-qt-labs-settings
+      - qml-module-qtquick-layouts
+      - qml-module-qtquick-templates2
+      - qml-module-qtquick-window2
+      - qml-module-qtgraphicaleffects
+      - dosfstools
+      - fdisk
+      - libarchive13
+      - libasn1-8-heimdal
+      - libcurl4
+      - libgssapi3-heimdal
+      - libhcrypto4-heimdal
+      - libheimbase1-heimdal
+      - libheimntlm0-heimdal
+      - libhx509-5-heimdal
+      - libkrb5-26-heimdal
+      - libldap-2.4-2
+      - libnghttp2-14
+      - libpsl5
+      - libroken18-heimdal
+      - librtmp1
+      - libsasl2-2
+      - libwind0-heimdal
+      - util-linux # needed for lsblk
+    build-packages:
+      - build-essential
+      - devscripts
+      - libarchive-dev
+      - libcurl4-openssl-dev
+      - qtbase5-dev
+      - qtbase5-dev-tools
+      - qtdeclarative5-dev
+      - zlib1g-dev
