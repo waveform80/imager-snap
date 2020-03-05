@@ -23,7 +23,7 @@ apps:
       - network-manager
       - raw-usb # may not be needed
       - block-devices # required for lsblk
-      - cifs-mount # required for umounting sd card
+      - udisks2 # required for writing to sd card
 
 parts:
   desktop-qt5:
