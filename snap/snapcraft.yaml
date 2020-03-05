@@ -91,4 +91,3 @@ parts:
       - qtbase5-dev
       - qtbase5-dev-tools
       - qtdeclarative5-dev
-      - zlib1g-dev
