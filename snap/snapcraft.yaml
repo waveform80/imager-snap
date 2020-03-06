@@ -21,6 +21,9 @@ apps:
       - removable-media
       - mount-observe
       - network-manager
+      - network-control
+      - cifs-mount
+      - raw-usb
       - block-devices # required for lsblk
       - udisks2 # required for writing to sd card
 
