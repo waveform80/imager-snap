@@ -1,7 +1,7 @@
-name: imager
+name: rpi-imager
 base: core18
 adopt-info: imagewriter
-summary: Raspberry Pi Imaging Utility
+summary: Raspberry Pi Imager
 description: |
   Use Raspberry Pi Imager for an easy way to install Raspbian and other operating systems to an SD card ready to use with your Raspberry Pi:
 
@@ -9,7 +9,7 @@ grade: stable
 confinement: strict
 
 apps:
-  imager:
+  rpi-imager:
     command: bin/desktop-launch rpi-imager
     plugs:
       - x11
