@@ -5,6 +5,9 @@ summary: Raspberry Pi Imager
 description: |
   Use Raspberry Pi Imager for an easy way to install Raspbian and other operating systems to an SD card ready to use with your Raspberry Pi:
 
+assumes:
+  - snapd2.43
+
 grade: stable
 confinement: strict
 
@@ -20,10 +23,9 @@ apps:
       - home
       - removable-media
       - mount-observe
-      - network-manager
+      - network-manager # required to grab image
       - network-control
       - cifs-mount
-      - raw-usb
       - block-devices # required for lsblk
       - udisks2 # required for writing to sd card
 
