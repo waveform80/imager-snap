@@ -22,9 +22,9 @@
 
 ## Install
 
-    sudo snap install imager
+    sudo snap install rpi-imager
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/imager)
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/rpi-imager)
 
 ([Don't have snapd installed?](https://snapcraft.io/docs/core/install))
 
