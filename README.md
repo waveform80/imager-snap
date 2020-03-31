@@ -9,11 +9,11 @@
 <p align="center"><b>This is the snap for Raspberry Pi Imager</b>, <i>“Raspberry Pi Imaging Utility”</i>. It works on Ubuntu, Fedora, Debian, and other major Linux distributions.</p>
 
 <p align="center">
-<a href="https://snapcraft.io/imager">
-  <img alt="imager" src="https://snapcraft.io/imager/badge.svg" />
+<a href="https://snapcraft.io/rpi-imager">
+  <img alt="imager" src="https://snapcraft.io/rpi-imager/badge.svg" />
   </a>
-<a href="https://snapcraft.io/imager">
-  <img alt="imager" src="https://snapcraft.io/imager/trending.svg?name=0" />
+<a href="https://snapcraft.io/rpi-imager">
+  <img alt="imager" src="https://snapcraft.io/rpi-imager/trending.svg?name=0" />
   </a>
 
 ![imager](https://dashboard.snapcraft.io/site_media/appmedia/2020/03/pi1.png "imager")
