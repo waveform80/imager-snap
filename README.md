@@ -1,4 +1,4 @@
-# imager
+# rpi-imager
 
 <h1 align="center">
   <img src="https://dashboard.snapcraft.io/site_media/appmedia/2020/03/imager.png" alt="imager">
