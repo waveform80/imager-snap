@@ -27,3 +27,7 @@
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/rpi-imager)
 
 ([Don't have snapd installed?](https://snapcraft.io/docs/core/install))
+
+## Upstream
+
+The snap is built from the upstream source which can be found at https://github.com/raspberrypi/rpi-imager
