@@ -57,7 +57,7 @@ parts:
     source-type: git
     override-pull: |
       snapcraftctl pull
-      last_committed_tag="$(git describe --tags --abbrev=0)"
+      last_committed_tag="$(git describe --tags `git rev-list --tags --max-count=1`)"
       echo $last_committed_tag
       last_released_tag="$(snap info $SNAPCRAFT_PROJECT_NAME | awk '$1 == "latest/beta:" { print $2 }')"
       echo $last_released_tag
@@ -66,6 +66,11 @@ parts:
       if [ "${last_committed_tag}" != "${last_released_tag}" ]; then
         git fetch
         git checkout "${last_committed_tag}"
+        echo "Setting version to $last_committed_tag"
+        snapcraftctl set-version "${last_committed_tag}"
+      else
+        echo "Setting version to $(git rev-parse --short HEAD)"
+        snapcraftctl set-version "$(git rev-parse --short HEAD)"
       fi
     stage-packages:
       - qml-module-qtquick2
