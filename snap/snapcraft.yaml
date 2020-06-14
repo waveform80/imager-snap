@@ -107,3 +107,7 @@ parts:
       - qtbase5-dev
       - qtbase5-dev-tools
       - qtdeclarative5-dev
+      - qttools5-dev-tools
+      - qttools5-dev
+      - libqt5svg5-dev
+      - libssl-dev
