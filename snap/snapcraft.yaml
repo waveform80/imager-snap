@@ -8,6 +8,10 @@ description: |
 grade: stable
 confinement: strict
 
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
 apps:
   rpi-imager:
     command: bin/desktop-launch rpi-imager
@@ -99,6 +103,8 @@ parts:
       - libsasl2-2
       - libwind0-heimdal
       - util-linux # needed for lsblk
+      - on arm64:
+        - libgles2
     build-packages:
       - build-essential
       - devscripts
