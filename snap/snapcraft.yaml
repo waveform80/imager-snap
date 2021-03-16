@@ -4,7 +4,7 @@ adopt-info: imagewriter
 summary: Raspberry Pi Imager
 description: |
   Use Raspberry Pi Imager for an easy way to install Raspbian and other operating systems to an SD card ready to use with your Raspberry Pi:
-
+compression: lzo
 grade: stable
 confinement: strict
 
