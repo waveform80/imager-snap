@@ -1,5 +1,5 @@
 name: rpi-imager
-base: core18
+base: core20
 adopt-info: imagewriter
 summary: Raspberry Pi Imager
 description: |
@@ -14,7 +14,7 @@ architectures:
 
 apps:
   rpi-imager:
-    command: bin/desktop-launch rpi-imager
+    command: bin/desktop-launch $SNAP/usr/local/bin/rpi-imager
     environment:
         DISABLE_WAYLAND: 1
     plugs:
