@@ -80,6 +80,17 @@ parts:
         echo "Setting version to $(git rev-parse --short HEAD)"
         snapcraftctl set-version "$(git rev-parse --short HEAD)"
       fi
+      # Strip out the vendored dependencies and embedded source
+      if [ -d "$SNAPCRAFT_PART_SRC"/embedded ]; then
+        rm -fr "$SNAPCRAFT_PART_SRC"/embedded
+      fi
+      if [ -d "$SNAPCRAFT_PART_SRC"/src/dependencies ]; then
+        pushd "$SNAPCRAFT_PART_SRC"/src/dependencies
+        for d in cmcurl cmliblzma fat32format libarchive-* zlib-* zstd-*; do
+          rm -fr "$d"
+        done
+        popd
+      fi
     stage-packages:
       - qml-module-qtquick2
       - qml-module-qtquick-controls2
