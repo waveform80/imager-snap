@@ -14,9 +14,11 @@ confinement: strict
 
 apps:
   rpi-imager:
-    command: bin/desktop-launch $SNAP/usr/local/bin/rpi-imager
+    command: usr/local/bin/rpi-imager
+    command-chain:
+      - bin/desktop-launch
     environment:
-        DISABLE_WAYLAND: 1
+      DISABLE_WAYLAND: 1
     plugs:
       - x11
       - opengl
@@ -24,12 +26,12 @@ apps:
       - desktop
       - desktop-legacy
       - home
-      - removable-media
-      - mount-observe
-      - network-manager # required to grab image
+      - removable-media  # required to re-write first-boot configuration
+      - mount-observe    # required to report mounts on target media
+      - network-manager  # required to grab image
       - network-control
       - cifs-mount
-      - udisks2 # required for writing to sd card
+      - udisks2          # required for writing to sd card
       - hardware-observe # required to find card with lsblk
 
 parts:
