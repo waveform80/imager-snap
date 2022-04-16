@@ -156,8 +156,6 @@ parts:
       - libwind0-heimdal
       - util-linux # needed for lsblk
       - qtwayland5
-      - on arm64:
-        - libgles2
     build-packages:
       - build-essential
       - devscripts
