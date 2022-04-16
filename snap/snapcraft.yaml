@@ -2,15 +2,15 @@ name: rpi-imager
 base: core20
 adopt-info: imagewriter
 summary: Raspberry Pi Imager
+website: https://www.raspberrypi.com/software/
+source-code: https://github.com/raspberrypi/rpi-imager
+issues: https://github.com/waveform80/imager-snap
 description: |
-  Use Raspberry Pi Imager for an easy way to install Raspbian and other operating systems to an SD card ready to use with your Raspberry Pi:
+  Use Raspberry Pi Imager for an easy way to install Raspbian and other
+  operating systems to an SD card ready to use with your Raspberry Pi
 compression: lzo
 grade: stable
 confinement: strict
-
-architectures:
-  - build-on: amd64
-  - build-on: arm64
 
 apps:
   rpi-imager:
