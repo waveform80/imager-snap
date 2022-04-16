@@ -17,6 +17,7 @@ apps:
     command: usr/local/bin/rpi-imager
     command-chain:
       - bin/desktop-launch
+    desktop: usr/local/share/applications/rpi-imager.desktop
     environment:
       DISABLE_WAYLAND: 1
       # Use GTK3 cursor theme, icon theme and open/save file dialogs
@@ -123,6 +124,10 @@ parts:
         done
         popd
       fi
+      # Point the icon to the right place
+      sed -i -e \
+        's|^Icon=rpi-imager|Icon=/usr/local/share/icons/hicolor/128x128/apps/rpi-imager.png|' \
+        "$SNAPCRAFT_PART_SRC"/src/linux/rpi-imager.desktop
     stage-packages:
       - qml-module-qtquick2
       - qml-module-qtquick-controls2
