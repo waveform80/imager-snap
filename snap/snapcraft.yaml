@@ -102,7 +102,7 @@ parts:
     build-packages:
       - libglib2.0-bin
     override-prime: |
-      snapcraftctl prime
+      craftctl default
       glib-compile-schemas "$SNAPCRAFT_PRIME"/usr/share/glib-2.0/schemas
   imagewriter:
     plugin: cmake
@@ -112,7 +112,7 @@ parts:
     source-subdir: src
     source-type: git
     override-pull: |
-      snapcraftctl pull
+      craftctl default
       last_committed_tag="$(git describe --tags $(git rev-list --tags --max-count=1))"
       last_committed_tag_ver="$(echo ${last_committed_tag} | sed 's/v//' )"
       last_released_tag=""
@@ -130,10 +130,10 @@ parts:
         git fetch
         git checkout "$last_committed_tag"
         echo "Setting version to $last_committed_tag"
-        snapcraftctl set-version "$last_committed_tag_ver"
+        craftctl set version="$last_committed_tag_ver"
       else
         echo "Setting version to $(git describe --tags)"
-        snapcraftctl set-version "$(git describe --tags)"
+        craftctl set version="$(git describe --tags)"
       fi
       # Strip out the vendored dependencies and embedded source
       if [ -d "$SNAPCRAFT_PART_SRC"/embedded ]; then
