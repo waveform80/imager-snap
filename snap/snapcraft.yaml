@@ -1,5 +1,5 @@
 name: rpi-imager
-base: core20
+base: core22
 adopt-info: imagewriter
 summary: Raspberry Pi Imager
 website: https://www.raspberrypi.com/software/
@@ -84,7 +84,6 @@ parts:
       - dpkg-dev
     stage-packages:
       - libxkbcommon0
-      - ttf-ubuntu-font-family
       - dmz-cursor-theme
       - light-themes
       - adwaita-icon-theme
