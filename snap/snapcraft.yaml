@@ -141,9 +141,7 @@ parts:
       fi
       if [ -d "$SNAPCRAFT_PART_SRC"/src/dependencies ]; then
         pushd "$SNAPCRAFT_PART_SRC"/src/dependencies
-        for d in cmcurl cmliblzma fat32format libarchive-* zlib-* zstd-*; do
-          rm -fr "$d"
-        done
+        rm -rf cmcurl cmliblzma fat32format libarchive-* zlib-* zstd-*
         popd
       fi
       # Point the icon to the right place
