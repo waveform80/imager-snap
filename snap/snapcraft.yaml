@@ -161,6 +161,7 @@ parts:
       - fdisk
       - libarchive13
       - libcurl4
+      - libcurl3-gnutls
     build-packages:
       - build-essential
       - cmake
