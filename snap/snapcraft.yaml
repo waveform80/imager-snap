@@ -165,11 +165,15 @@ parts:
       - cmake
       - devscripts
       - libarchive-dev
+      - zlib1g-dev
+      - liblzma-dev
       - libcurl4-gnutls-dev
       - libgnutls28-dev
+      - libdrm-dev
       - qtbase5-dev
       - qtbase5-dev-tools
       - qtdeclarative5-dev
       - qttools5-dev-tools
       - qttools5-dev
       - libqt5svg5-dev
+      - pkg-config
