@@ -14,16 +14,18 @@ description: |
 
   Usage is as simple as:
 
-  1. Pick the operating system you want to write.
+  1. Pick the Raspberry Pi board you want to use.
 
-  2. Pick the storage you want to write it to (SD card, hard drive, SSD, etc.)
+  2. Pick the operating system you want to write.
 
-  3. Click "WRITE" and wait.
+  3. Pick the storage you want to write it to (SD card, hard drive, SSD, etc.)
+
+  4. Click "NEXT", confirm you wish to overwrite your storage and wait!
 
   The application also verifies that the operating system has been written
   correctly after writing has finished. With certain operating system images,
-  the imager also supports customizing the first boot configuration (look for
-  the "cog" icon in the lower right of the main window).
+  the imager also supports customizing the first boot configuration (you will
+  be prompted for more information after selecting "NEXT" in this case).
 compression: lzo
 grade: stable
 confinement: strict
