@@ -117,26 +117,10 @@ parts:
       craftctl default
       last_committed_tag="$(git describe --tags $(git rev-list --tags --max-count=1))"
       last_committed_tag_ver="$(echo ${last_committed_tag} | sed 's/v//' )"
-      last_released_tag=""
-      for channel in beta candidate stable; do
-        last_released_tag="$(
-          snap info "$SNAPCRAFT_PROJECT_NAME" 2>/dev/null |
-          awk -v channel="latest/$channel" '$1 == channel { print $2; }'
-        )"
-        [ -z "$last_released_tag" ] && break
-        [ "$last_released_tag" != "↑" ] && break
-      done
-      # If the latest tag from the upstream project has not been released to
-      # beta (or above), build that tag instead of master.
-      if [ "$last_committed_tag_ver" != "$last_released_tag" ]; then
-        git fetch
-        git checkout "$last_committed_tag"
-        echo "Setting version to $last_committed_tag"
-        craftctl set version="$last_committed_tag_ver"
-      else
-        echo "Setting version to $(git describe --tags)"
-        craftctl set version="$(git describe --tags)"
-      fi
+      git fetch
+      git checkout "$last_committed_tag"
+      echo "Building $last_committed_tag_ver"
+      craftctl set version="$last_committed_tag_ver"
       # Strip out the vendored dependencies and embedded source
       if [ -d "$CRAFT_PART_SRC"/embedded ]; then
         rm -fr "$CRAFT_PART_SRC"/embedded
