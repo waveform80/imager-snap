@@ -105,7 +105,7 @@ parts:
       - libglib2.0-bin
     override-prime: |
       craftctl default
-      glib-compile-schemas "$SNAPCRAFT_PRIME"/usr/share/glib-2.0/schemas
+      glib-compile-schemas "$CRAFT_PRIME"/usr/share/glib-2.0/schemas
   imagewriter:
     plugin: cmake
     cmake-parameters:
@@ -138,18 +138,18 @@ parts:
         craftctl set version="$(git describe --tags)"
       fi
       # Strip out the vendored dependencies and embedded source
-      if [ -d "$SNAPCRAFT_PART_SRC"/embedded ]; then
-        rm -fr "$SNAPCRAFT_PART_SRC"/embedded
+      if [ -d "$CRAFT_PART_SRC"/embedded ]; then
+        rm -fr "$CRAFT_PART_SRC"/embedded
       fi
-      if [ -d "$SNAPCRAFT_PART_SRC"/src/dependencies ]; then
-        pushd "$SNAPCRAFT_PART_SRC"/src/dependencies
+      if [ -d "$CRAFT_PART_SRC"/src/dependencies ]; then
+        pushd "$CRAFT_PART_SRC"/src/dependencies
         rm -rf cmcurl cmliblzma fat32format libarchive-* zlib-* zstd-*
         popd
       fi
       # Point the icon to the right place
       sed -i -e \
         's|^Icon=rpi-imager|Icon=/usr/local/share/icons/hicolor/128x128/apps/rpi-imager.png|' \
-        "$SNAPCRAFT_PART_SRC"/src/linux/rpi-imager.desktop
+        "$CRAFT_PART_SRC"/src/linux/rpi-imager.desktop
     stage-packages:
       - qml-module-qtquick2
       - qml-module-qtquick-controls2
