@@ -106,7 +106,6 @@ parts:
       - dosfstools
       - fdisk
       - libarchive13
-      - libcurl4
       - libcurl3-gnutls
     build-snaps:
       - kf5-5-111-qt-5-15-11-core22
@@ -120,3 +119,9 @@ parts:
       - libgnutls28-dev
       - libdrm-dev
       - pkg-config
+      - libgles-dev
+    prime:
+      - -usr/lib/aarch64-linux-gnu/libicuio.so.70.1
+      - -usr/lib/aarch64-linux-gnu/libicutest.so.70.1
+      - -usr/lib/aarch64-linux-gnu/libicutu.so.70.1
+      - -usr/lib/aarch64-linux-gnu/libicui18n.so.70.1
