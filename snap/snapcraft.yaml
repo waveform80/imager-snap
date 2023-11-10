@@ -103,6 +103,7 @@ parts:
         's|^Icon=rpi-imager|Icon=/usr/local/share/icons/hicolor/128x128/apps/rpi-imager.png|' \
         "$CRAFT_PART_SRC"/src/linux/rpi-imager.desktop
     stage-packages:
+      - util-linux
       - dosfstools
       - fdisk
       - libarchive13
@@ -121,7 +122,7 @@ parts:
       - pkg-config
       - libgles-dev
     prime:
-      - -usr/lib/aarch64-linux-gnu/libicuio.so.70.1
-      - -usr/lib/aarch64-linux-gnu/libicutest.so.70.1
-      - -usr/lib/aarch64-linux-gnu/libicutu.so.70.1
-      - -usr/lib/aarch64-linux-gnu/libicui18n.so.70.1
+      - -usr/lib/*/libicuio.so.70.1
+      - -usr/lib/*/libicutest.so.70.1
+      - -usr/lib/*/libicutu.so.70.1
+      - -usr/lib/*/libicui18n.so.70.1
