@@ -35,7 +35,7 @@ apps:
     command: usr/local/bin/rpi-imager
     command-chain:
       - bin/desktop-launch
-    desktop: usr/local/share/applications/rpi-imager.desktop
+    desktop: usr/local/share/applications/org.raspberrypi.rpi-imager.desktop
     environment:
       DISABLE_WAYLAND: 1
       # Use GTK3 cursor theme, icon theme and open/save file dialogs
@@ -133,7 +133,7 @@ parts:
       # Point the icon to the right place
       sed -i -e \
         's|^Icon=rpi-imager|Icon=/usr/local/share/icons/hicolor/128x128/apps/rpi-imager.png|' \
-        "$CRAFT_PART_SRC"/src/linux/rpi-imager.desktop
+        "$CRAFT_PART_SRC"/src/linux/org.raspberrypi.rpi-imager.desktop
     stage-packages:
       - util-linux
       - qml-module-qtquick2
@@ -164,8 +164,3 @@ parts:
       - libqt5svg5-dev
       - pkg-config
       - libgles-dev
-    prime:
-      - -usr/lib/*/libicuio.so.70.1
-      - -usr/lib/*/libicutest.so.70.1
-      - -usr/lib/*/libicutu.so.70.1
-      - -usr/lib/*/libicui18n.so.70.1
