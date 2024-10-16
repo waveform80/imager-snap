@@ -1,9 +1,9 @@
 name: rpi-imager
-base: core22
+base: core24
 adopt-info: imagewriter
 summary: Raspberry Pi Imager
 website: https://www.raspberrypi.com/software/
-source-code: https://github.com/raspberrypi/rpi-imager
+source-code: https://github.com/r41k0u/rpi-imager
 issues: https://github.com/waveform80/imager-snap
 icon: images/rpi-imager.png
 license: Apache-2.0
@@ -38,8 +38,7 @@ apps:
     desktop: usr/local/share/applications/org.raspberrypi.rpi-imager.desktop
     environment:
       DISABLE_WAYLAND: 1
-      # Use GTK3 cursor theme, icon theme and open/save file dialogs
-      QT_QPA_PLATFORMTHEME: gtk3
+    extensions: [gnome]
     plugs:
       - x11
       - opengl
@@ -74,43 +73,55 @@ plugs:
     default-provider: gtk-common-themes
 
 parts:
-  desktop-qt5:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+  desktop-qt6:
+    source: https://github.com/r41k0u/snapcraft-desktop-helpers.git
     source-subdir: qt
     plugin: make
-    make-parameters: ["FLAVOR=qt5"]
+    make-parameters: ["FLAVOR=qt6"]
     build-packages:
       - build-essential
-      - qtbase5-dev
+      - qt6-base-dev
       - dpkg-dev
     stage-packages:
-      - libxkbcommon0
       - dmz-cursor-theme
       - light-themes
       - adwaita-icon-theme
-      - gnome-themes-standard
+      - gnome-themes-extra
       - shared-mime-info
-      - libqt5gui5
+      - libqt6gui6
       - libgtk2.0-0
       - libgdk-pixbuf2.0-0
-      - libqt5svg5 # for loading icon themes which are svg
+      - libqt6svg6 # for loading icon themes which are svg
       - locales-all
       - xdg-user-dirs
-      - fcitx-frontend-qt5
-  qt5-gtk-platform:
+      - fcitx-frontend-qt6
+  qt6-gtk-platform:
     plugin: nil
     stage-packages:
-      - qt5-gtk-platformtheme
+      - qt6-gtk-platformtheme
     build-packages:
       - libglib2.0-bin
     override-prime: |
       craftctl default
       glib-compile-schemas "$CRAFT_PRIME"/usr/share/glib-2.0/schemas
+      if [ "$CRAFT_PLATFORM" == "amd64" ]; then
+        ARCH="x86_64-linux-gnu"
+      elif [ "$CRAFT_PLATFORM" == "armhf" ]; then
+        ARCH="arm-linux-gnueabihf"
+      elif [ "$CRAFT_PLATFORM" == "arm64" ]; then
+        ARCH="aarch64-linux-gnu"
+      elif [ "$CRAFT_PLATFORM" == "ppc64el" ]; then
+        ARCH="powerpc64le-linux-gnu"
+      else
+        ARCH="$CRAFT_PLATFORM-linux-gnu"
+      fi
+      mv usr/lib/${ARCH}/libproxy/libpxbackend-1.0.so usr/lib/${ARCH}
+      rm -r usr/lib/${ARCH}/libproxy
   imagewriter:
     plugin: cmake
     cmake-parameters:
       - -DENABLE_CHECK_VERSION=OFF
-    source: https://github.com/raspberrypi/rpi-imager.git
+    source: https://github.com/r41k0u/rpi-imager.git
     source-subdir: src
     source-type: git
     override-pull: |
@@ -127,7 +138,7 @@ parts:
       fi
       if [ -d "$CRAFT_PART_SRC"/src/dependencies ]; then
         pushd "$CRAFT_PART_SRC"/src/dependencies
-        rm -rf cmcurl cmliblzma fat32format libarchive-* zlib-* zstd-*
+        rm -rf cmcurl cmliblzma fat32format
         popd
       fi
       # Point the icon to the right place
@@ -136,16 +147,18 @@ parts:
         "$CRAFT_PART_SRC"/src/linux/org.raspberrypi.rpi-imager.desktop
     stage-packages:
       - util-linux
-      - qml-module-qtquick2
-      - qml-module-qtquick-controls2
-      - qml-module-qtquick-layouts
-      - qml-module-qtquick-templates2
-      - qml-module-qtquick-window2
+      - qml6-module-qtquick
+      - qml6-module-qtquick-controls
+      - qml6-module-qtquick-layouts
+      - qml6-module-qtquick-templates
+      - qml6-module-qtquick-window
       - qml-module-qtgraphicaleffects
       - dosfstools
       - fdisk
       - libarchive13
       - libcurl3-gnutls
+      - libqt6widgets6t64
+      - qml6-module-qtqml-workerscript
     build-packages:
       - build-essential
       - cmake
@@ -156,11 +169,11 @@ parts:
       - libcurl4-gnutls-dev
       - libgnutls28-dev
       - libdrm-dev
-      - qtbase5-dev
-      - qtbase5-dev-tools
-      - qtdeclarative5-dev
-      - qttools5-dev-tools
-      - qttools5-dev
-      - libqt5svg5-dev
+      - qt6-base-dev
+      - qt6-base-dev-tools
+      - qt6-declarative-dev
+      - qt6-tools-dev-tools
+      - qt6-tools-dev
+      - libqt6svg6-dev
       - pkg-config
       - libgles-dev
