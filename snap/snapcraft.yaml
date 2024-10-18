@@ -117,7 +117,7 @@ parts:
       git checkout "$last_committed_tag"
       echo "Building $last_committed_tag_ver"
       craftctl set version="$last_committed_tag_ver"
-      # Strip out the vendored dependencies and embedded source
+      # Strip out the embedded source
       if [ -d "$CRAFT_PART_SRC"/embedded ]; then
         rm -fr "$CRAFT_PART_SRC"/embedded
       fi
@@ -150,4 +150,3 @@ parts:
       - qt6-tools-dev-tools
       - qt6-tools-dev
       - libqt6svg6-dev
-      - libgles-dev
