@@ -122,7 +122,7 @@ parts:
         rm -fr "$CRAFT_PART_SRC"/embedded
       fi
       # Patch the required Qt version
-      patch -p1 < "$CRAFT_PROJECT_DIR"/snap/local/qt6.4.patch
+      patch -p1 < "$CRAFT_PROJECT_DIR"/qt-6.4.patch
       # Point the icon to the right place
       sed -i -e \
         's|^Icon=rpi-imager|Icon=/usr/local/share/icons/hicolor/128x128/apps/rpi-imager.png|' \
