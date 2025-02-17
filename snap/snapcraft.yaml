@@ -115,8 +115,8 @@ parts:
     source-type: git
     override-pull: |
       craftctl default
-      last_committed_tag="$(git describe --tags $(git rev-list --tags --max-count=1))"
-      last_committed_tag_ver="$(echo ${last_committed_tag} | sed 's/v//' )"
+      last_committed_tag="v1.8.5"
+      last_committed_tag_ver="1.8.5"
       git fetch
       git checkout "$last_committed_tag"
       echo "Building $last_committed_tag_ver"
