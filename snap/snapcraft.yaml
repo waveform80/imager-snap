@@ -78,7 +78,7 @@ parts:
       - gnome-themes-extra
       - shared-mime-info
       - libqt6gui6
-      - libgtk2.0-0
+      - libgtk2.0-0t64
       - libgdk-pixbuf2.0-0
       - libqt6svg6 # for loading icon themes which are svg
       - locales-all
