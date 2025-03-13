@@ -1,0 +1,32 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 87286c17..7e6c1185 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -240,7 +240,7 @@ set(SOURCES ${PLATFORM_SOURCES} "main.cpp" "imagewriter.cpp" "networkaccessmanag
+     "devicewrapper.cpp" "devicewrapperblockcacheentry.cpp" "devicewrapperpartition.cpp" "devicewrapperfatpartition.cpp"
+     "driveformatthread.cpp" "localfileextractthread.cpp" "powersaveblocker.cpp" "downloadstatstelemetry.cpp" "qml.qrc" "dependencies/sha256crypt/sha256crypt.c" "cli.cpp")
+ 
+-find_package(Qt6 6.7 QUIET COMPONENTS Core Quick LinguistTools Svg OPTIONAL_COMPONENTS Widgets DBus WinExtras)
++find_package(Qt6 6.4 QUIET COMPONENTS Core Quick LinguistTools Svg OPTIONAL_COMPONENTS Widgets DBus WinExtras)
+ if (Qt6_FOUND)
+     set(QT Qt6)
+     if (APPLE)
+@@ -495,4 +495,4 @@ else()
+ endif()
+ 
+ include_directories(${CURL_INCLUDE_DIR} ${LibArchive_INCLUDE_DIR} ${LIBLZMA_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${ZSTD_INCLUDE_DIR})
+-target_link_libraries(${PROJECT_NAME} PRIVATE ${QT}::Core ${QT}::Quick ${QT}::Svg ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${ZSTD_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBLZMA_LIBRARIES} ${LIBDRM_LIBRARIES} ${ATOMIC_LIBRARY} ${EXTRALIBS})
+\ No newline at end of file
++target_link_libraries(${PROJECT_NAME} PRIVATE ${QT}::Core ${QT}::Quick ${QT}::Svg ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${ZSTD_LIBRARIES} ${ZLIB_LIBRARIES} ${LIBLZMA_LIBRARIES} ${LIBDRM_LIBRARIES} ${ATOMIC_LIBRARY} ${EXTRALIBS})
+diff --git a/src/qmlcomponents/ImButton.qml b/src/qmlcomponents/ImButton.qml
+index 431c0a17..8209b1f4 100644
+--- a/src/qmlcomponents/ImButton.qml
++++ b/src/qmlcomponents/ImButton.qml
+@@ -13,7 +13,6 @@ Button {
+     font.capitalization: Font.AllUppercase
+     Material.background: activeFocus ? "#d1dcfb" : "#ffffff"
+     Material.foreground: "#cd2355"
+-    Material.roundedScale: Material.ExtraSmallScale
+     Accessible.onPressAction: clicked()
+     Keys.onEnterPressed: clicked()
+     Keys.onReturnPressed: clicked()
