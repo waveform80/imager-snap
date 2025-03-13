@@ -111,12 +111,10 @@ parts:
     source-type: git
     override-pull: |
       craftctl default
-      last_committed_tag="v1.8.5"
-      last_committed_tag_ver="1.8.5"
+      # Upstream no longer tag releases; manually set version and checkout
+      craftctl set version="1.9.3"
       git fetch
-      git checkout "$last_committed_tag"
-      echo "Building $last_committed_tag_ver"
-      craftctl set version="$last_committed_tag_ver"
+      git checkout ebd2a01c66237ce4a8c4ce3a5cdae6dcc307cc0f
       # Strip out the embedded source
       if [ -d "$CRAFT_PART_SRC"/embedded ]; then
         rm -fr "$CRAFT_PART_SRC"/embedded
