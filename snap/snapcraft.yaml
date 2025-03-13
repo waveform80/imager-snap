@@ -91,16 +91,16 @@ parts:
     override-prime: |
       craftctl default
       glib-compile-schemas "$CRAFT_PRIME"/usr/share/glib-2.0/schemas
-      if [ "$CRAFT_PLATFORM" == "amd64" ]; then
+      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
         ARCH="x86_64-linux-gnu"
-      elif [ "$CRAFT_PLATFORM" == "armhf" ]; then
+      elif [ "$CRAFT_ARCH_BUILD_FOR" == "armhf" ]; then
         ARCH="arm-linux-gnueabihf"
-      elif [ "$CRAFT_PLATFORM" == "arm64" ]; then
+      elif [ "$CRAFT_ARCH_BUILD_FOR" == "arm64" ]; then
         ARCH="aarch64-linux-gnu"
-      elif [ "$CRAFT_PLATFORM" == "ppc64el" ]; then
+      elif [ "$CRAFT_ARCH_BUILD_FOR" == "ppc64el" ]; then
         ARCH="powerpc64le-linux-gnu"
       else
-        ARCH="$CRAFT_PLATFORM-linux-gnu"
+        ARCH="${CRAFT_ARCH_BUILD_FOR}-linux-gnu"
       fi
       mv usr/lib/${ARCH}/libproxy/libpxbackend-1.0.so usr/lib/${ARCH}
       rm -r usr/lib/${ARCH}/libproxy
