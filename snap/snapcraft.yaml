@@ -32,6 +32,8 @@ confinement: strict
 platforms:
   amd64: {}
   arm64: {}
+  armhf: {}
+  ppc64el: {}
 
 apps:
   rpi-imager:
