@@ -29,6 +29,12 @@ description: |
 compression: lzo
 grade: stable
 confinement: strict
+platforms:
+  amd64: {}
+  armhf: {}
+  arm64: {}
+  ppc64el: {}
+  riscv64: {}
 
 apps:
   rpi-imager:
