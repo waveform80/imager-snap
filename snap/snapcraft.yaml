@@ -33,7 +33,11 @@ platforms:
   amd64: {}
   arm64: {}
   armhf: {}
-  ppc64el: {}
+  # Can't build ppc64el anymore as gnome content snap stopped supporting it
+  # in Core 24
+  #ppc64el: {}
+  # Can't build s390x as upstream is little-endian specific
+  #s390x: {}
 
 apps:
   rpi-imager:
@@ -99,8 +103,8 @@ parts:
         ARCH="arm-linux-gnueabihf"
       elif [ "$CRAFT_ARCH_BUILD_FOR" == "arm64" ]; then
         ARCH="aarch64-linux-gnu"
-      elif [ "$CRAFT_ARCH_BUILD_FOR" == "ppc64el" ]; then
-        ARCH="powerpc64le-linux-gnu"
+      #elif [ "$CRAFT_ARCH_BUILD_FOR" == "ppc64el" ]; then
+      #  ARCH="powerpc64le-linux-gnu"
       else
         ARCH="${CRAFT_ARCH_BUILD_FOR}-linux-gnu"
       fi
