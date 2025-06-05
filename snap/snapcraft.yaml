@@ -134,7 +134,7 @@ parts:
       # Point the icon to the right place
       sed -i -e \
         's|^Icon=rpi-imager|Icon=/usr/local/share/icons/hicolor/128x128/apps/rpi-imager.png|' \
-        "$CRAFT_PART_SRC"/src/linux/org.raspberrypi.rpi-imager.desktop
+        "$CRAFT_PART_SRC"/debian/org.raspberrypi.rpi-imager.desktop
     stage-packages:
       - util-linux
       - qml6-module-qtquick
