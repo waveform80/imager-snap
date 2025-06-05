@@ -1,8 +1,8 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index b440e305..8cef98a4 100644
+index 66157fbb..d4045e28 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -248,7 +248,7 @@ set(SOURCES ${PLATFORM_SOURCES} "main.cpp" "imagewriter.cpp" "networkaccessmanag
+@@ -545,7 +545,7 @@ set(SOURCES ${PLATFORM_SOURCES} "main.cpp" "networkaccessmanagerfactory.cpp"
      "devicewrapper.cpp" "devicewrapperblockcacheentry.cpp" "devicewrapperpartition.cpp" "devicewrapperfatpartition.cpp"
      "driveformatthread.cpp" "localfileextractthread.cpp" "powersaveblocker.cpp" "downloadstatstelemetry.cpp" "qml.qrc" "dependencies/sha256crypt/sha256crypt.c" "cli.cpp")
  
@@ -11,14 +11,44 @@ index b440e305..8cef98a4 100644
  if (Qt6_FOUND)
      set(QT Qt6)
      if (APPLE)
+@@ -582,7 +582,7 @@ configure_file(i18n/translations.qrc "${CMAKE_CURRENT_BINARY_DIR}" COPYONLY)
+ set(SOURCES ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/translations.qrc ${QM_FILES})
+ 
+ # Create an rpi-imager_lupdate target
+-qt_add_lupdate(TS_FILES ${TRANSLATIONS} SOURCE_TARGETS ${PROJECT_NAME} OPTIONS -no-obsolete -locations none)
++qt_add_lupdate(${PROJECT_NAME} TS_FILES ${TRANSLATIONS} OPTIONS -no-obsolete -locations none)
+ 
+ if (WIN32)
+     # Adding WIN32 prevents a console window being opened on Windows
+@@ -607,12 +607,6 @@ else()
+     add_definitions(-DCHECK_VERSION_DEFAULT=false)
+ endif()
+ 
+-qt_policy(SET QTP0001 NEW)
+-
+-if (QT_KNOWN_POLICY_QTP0004)
+-    qt_policy(SET QTP0004 NEW)
+-endif()
+-
+ set(QT_QML_GENERATE_QMLLS_INI ON)
+ 
+ set(IMAGER_QML_FILES
+@@ -656,6 +650,7 @@ qt_add_qml_module(${PROJECT_NAME}
+     OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/RpiImager
+     DEPENDENCIES QtQuick
+     NO_PLUGIN
++    RESOURCE_PREFIX /qt/qml/
+ )
+ 
+ # Because dependencies are typically not available by default on Windows, build bundled code
 diff --git a/src/qmlcomponents/ImButton.qml b/src/qmlcomponents/ImButton.qml
-index 431c0a17..8209b1f4 100644
+index d2ceb5e3..80a677a0 100644
 --- a/src/qmlcomponents/ImButton.qml
 +++ b/src/qmlcomponents/ImButton.qml
-@@ -13,7 +13,6 @@ Button {
+@@ -14,7 +14,6 @@ Button {
      font.capitalization: Font.AllUppercase
-     Material.background: activeFocus ? "#d1dcfb" : "#ffffff"
-     Material.foreground: "#cd2355"
+     Material.background: activeFocus ? Style.buttonFocusedBackgroundColor : Style.buttonBackgroundColor
+     Material.foreground: Style.buttonForegroundColor
 -    Material.roundedScale: Material.ExtraSmallScale
      Accessible.onPressAction: clicked()
      Keys.onEnterPressed: clicked()
