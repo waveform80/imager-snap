@@ -69,7 +69,8 @@ apps:
 
 parts:
   desktop-qt6:
-    source: https://github.com/r41k0u/snapcraft-desktop-helpers.git
+    source: snap/local/snapcraft-desktop-helpers
+    source-type: local
     source-subdir: qt
     plugin: make
     make-parameters: ["FLAVOR=qt6"]
