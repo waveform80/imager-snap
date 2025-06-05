@@ -30,9 +30,9 @@ compression: lzo
 grade: stable
 confinement: strict
 platforms:
-  amd64: {}
-  arm64: {}
-  armhf: {}
+  amd64: null
+  arm64: null
+  armhf: null
   # This isn't going to work until the gnome content snap supports it
   #riscv64: {}
   # Can't build ppc64el anymore as gnome content snap stopped supporting it
