@@ -49,6 +49,8 @@ apps:
     desktop: usr/local/share/applications/org.raspberrypi.rpi-imager.desktop
     environment:
       DISABLE_WAYLAND: 1
+      # From https://github.com/ubuntu/snapcraft-desktop-helpers/pull/227#issuecomment-2694314156.
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libproxy
     extensions: [gnome]
     plugs:
       - x11
@@ -67,13 +69,19 @@ apps:
       - wayland          # required for theming on wayland
       - gsettings        # required for theming on wayland
 
+# From https://github.com/ubuntu/snapcraft-desktop-helpers/pull/227#issuecomment-2694314156
+layout:
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libproxy:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libproxy
+
 parts:
   desktop-qt6:
     source: snap/local/snapcraft-desktop-helpers
     source-type: local
     source-subdir: qt
     plugin: make
-    make-parameters: ["FLAVOR=qt6"]
+    make-parameters:
+      - FLAVOR=qt6
     build-packages:
       - build-essential
       - qt6-base-dev
@@ -91,28 +99,6 @@ parts:
       - locales-all
       - xdg-user-dirs
       - fcitx-frontend-qt6
-  qt6-gtk-platform:
-    plugin: nil
-    stage-packages:
-      - qt6-gtk-platformtheme
-    build-packages:
-      - libglib2.0-bin
-    override-prime: |
-      craftctl default
-      glib-compile-schemas "$CRAFT_PRIME"/usr/share/glib-2.0/schemas
-      if [ "$CRAFT_ARCH_BUILD_FOR" == "amd64" ]; then
-        ARCH="x86_64-linux-gnu"
-      elif [ "$CRAFT_ARCH_BUILD_FOR" == "armhf" ]; then
-        ARCH="arm-linux-gnueabihf"
-      elif [ "$CRAFT_ARCH_BUILD_FOR" == "arm64" ]; then
-        ARCH="aarch64-linux-gnu"
-      #elif [ "$CRAFT_ARCH_BUILD_FOR" == "ppc64el" ]; then
-      #  ARCH="powerpc64le-linux-gnu"
-      else
-        ARCH="${CRAFT_ARCH_BUILD_FOR}-linux-gnu"
-      fi
-      mv usr/lib/${ARCH}/libproxy/libpxbackend-1.0.so usr/lib/${ARCH}
-      rm -r usr/lib/${ARCH}/libproxy
   imagewriter:
     plugin: cmake
     cmake-parameters:
