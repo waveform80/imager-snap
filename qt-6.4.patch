@@ -39,17 +39,3 @@ index 66157fbb..d4045e28 100644
      NO_PLUGIN
 +    RESOURCE_PREFIX /qt/qml/
  )
- 
- # Because dependencies are typically not available by default on Windows, build bundled code
-diff --git a/src/qmlcomponents/ImButton.qml b/src/qmlcomponents/ImButton.qml
-index d2ceb5e3..80a677a0 100644
---- a/src/qmlcomponents/ImButton.qml
-+++ b/src/qmlcomponents/ImButton.qml
-@@ -14,7 +14,6 @@ Button {
-     font.capitalization: Font.AllUppercase
-     Material.background: activeFocus ? Style.buttonFocusedBackgroundColor : Style.buttonBackgroundColor
-     Material.foreground: Style.buttonForegroundColor
--    Material.roundedScale: Material.ExtraSmallScale
-     activeFocusOnTab: true
-     Accessible.onPressAction: clicked()
-     Keys.onEnterPressed: clicked()
