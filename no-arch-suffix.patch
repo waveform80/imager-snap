@@ -1,21 +1,6 @@
-diff --git a/build-qt.sh b/build-qt.sh
-index aa4b461e..64c4d33f 100755
---- a/build-qt.sh
-+++ b/build-qt.sh
-@@ -94,16 +94,6 @@ fi
- # Major version (for directory structure)
- QT_MAJOR_VERSION=$(echo "$QT_VERSION" | cut -d. -f1)
- 
--# Detect system architecture and set appropriate directory suffix
--ARCH=$(uname -m)
--if [ "$ARCH" = "x86_64" ]; then
--    PREFIX="$PREFIX/gcc_64"
--elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
--    PREFIX="$PREFIX/gcc_arm64"
--elif [[ "$ARCH" == arm* ]]; then
--    PREFIX="$PREFIX/gcc_arm32"
--fi
--
- # Detect Raspberry Pi model and set appropriate optimization flags
- RPI_MODEL=""
- RPI_CFLAGS=""
+--- a/qt/build-qt.sh
++++ b/qt/build-qt.sh
+@@ -45,2 +45 @@
+-# Set architecture-specific prefix suffix
+-set_arch_prefix_suffix
++# Snapcraft supplies the complete installation prefix for each architecture.

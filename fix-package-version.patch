@@ -1,0 +1,11 @@
+--- a/src/cmake/GenerateVersion.cmake
++++ b/src/cmake/GenerateVersion.cmake
+@@ -18,7 +18,7 @@
+     # an upgrade to whatever the server lists. Both prefixes are allowed
+     # because this repository carries 1.6.1 as well as v1.6.2.
+     execute_process(
+-        COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty
++        COMMAND "${GIT_EXECUTABLE}" describe --tags --exact-match
+                 --match "v[0-9]*" --match "[0-9]*"
+         WORKING_DIRECTORY "${SOURCE_DIR}"
+         OUTPUT_VARIABLE GIT_DESCRIBE
