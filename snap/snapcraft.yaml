@@ -11,7 +11,7 @@ issues:
   - https://github.com/waveform80/imager-snap/issues
 contact:
   - dave.jones@canonical.com
-icon: images/rpi-imager.png
+icon: images/rpi-imager.svg
 license: Apache-2.0
 description: |
   Raspberry Pi Imager is an easy to use application for installing Raspberry Pi
@@ -53,6 +53,7 @@ apps:
     command-chain:
       - snap/command-chain/qt-launch
     desktop: usr/share/applications/com.raspberrypi.rpi-imager.desktop
+    common-id: com.raspberrypi.rpi-imager
     environment:
       DISABLE_WAYLAND: 1
     extensions: [gnome]

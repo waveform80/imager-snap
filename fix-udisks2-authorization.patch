@@ -113,6 +113,19 @@
    if (fd_ < 0) {
      last_error_code_ = errno;
      return FileError::kOpenError;
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -236,6 +236,10 @@
+ 
+     app.setOrganizationName("Raspberry Pi");
+     app.setOrganizationDomain("raspberrypi.com");
++    if (!qEnvironmentVariableIsEmpty("SNAP_INSTANCE_NAME"))
++        app.setDesktopFileName(qEnvironmentVariable("SNAP_INSTANCE_NAME") + QStringLiteral("_rpi-imager"));
++    else if (!qEnvironmentVariableIsEmpty("FLATPAK_ID"))
++        app.setDesktopFileName(qEnvironmentVariable("FLATPAK_ID"));
+     app.setApplicationName("Raspberry Pi Imager");
+     app.setApplicationVersion(ImageWriter::staticVersion());
+     {
 --- a/src/downloadthread.cpp
 +++ b/src/downloadthread.cpp
 @@ -438,4 +438,5 @@
