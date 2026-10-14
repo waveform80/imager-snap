@@ -72,8 +72,7 @@ apps:
       - hardware-observe # required to find card with lsblk
       - wayland          # required for theming on wayland
       - gsettings        # required for theming on wayland
-      - block-devices
-      - screen-inhibit-control
+      - block-devices    # required to find card with lsblk
 
 parts:
   qt:
@@ -221,6 +220,8 @@ parts:
       craftctl default
       patch --batch --forward --fuzz=0 -d "$CRAFT_PART_SRC" -p1 \
         < "$CRAFT_PROJECT_DIR/fix-package-version.patch"
+      patch --batch --forward --fuzz=0 -d "$CRAFT_PART_SRC" -p1 \
+        < "$CRAFT_PROJECT_DIR/fix-udisks2-authorization.patch"
     override-build: |
       craftctl default
       # Check the version actually compiled into Imager, not just snap metadata.
