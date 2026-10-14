@@ -174,8 +174,10 @@ parts:
       patch --batch --forward --fuzz=0 -d "$CRAFT_PART_SRC" -p1 \
         < "$CRAFT_PROJECT_DIR/no-arch-suffix.patch"
     override-build: |
+      # Let Snapcraft manage clean builds; retain Qt objects after an interruption.
       "$CRAFT_PART_SRC/qt/build-qt.sh" \
         --unprivileged \
+        --no-clean \
         --version=6.11.1 \
         --cores="$CRAFT_PARALLEL_BUILD_COUNT" \
         --prefix="$CRAFT_PART_INSTALL/usr"
@@ -190,6 +192,14 @@ parts:
       - -usr/metatypes
       - -usr/modules
       - -usr/qt6-toolchain.cmake
+      # Unused runtime libraries; retain them in stage for build-time tools.
+      - -usr/lib/libQt6CanvasPainter.so*
+      - -usr/lib/libQt6Concurrent.so*
+      - -usr/lib/libQt6NetworkAuth.so*
+      - -usr/lib/libQt6ShaderTools.so*
+      - -usr/lib/libQt6TaskTree.so*
+      - -usr/lib/libQt6Xml.so*
+      - -usr/lib/*/libxcb-xinerama.so*
 
   imagewriter:
     after: [qt]
