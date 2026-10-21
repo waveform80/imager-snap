@@ -1,0 +1,314 @@
+diff --git a/src/downloadthread.cpp b/src/downloadthread.cpp
+index cf65721..21e57e0 100644
+--- a/src/downloadthread.cpp
++++ b/src/downloadthread.cpp
+@@ -435,7 +435,8 @@ bool DownloadThread::_openAndPrepareDevice()
+                 (openErrno == EACCES || openErrno == EPERM);
+             QString msg = tr("Cannot open storage device '%1'.").arg(QString(_filename));
+ 
+-            if (permissionProblem && ::geteuid() != 0) {
++            if (permissionProblem && ::geteuid() != 0
++                && !qEnvironmentVariableIsSet("SNAP")) {
+                 msg += QLatin1Char(' ');
+                 msg += tr("Please run with elevated privileges (sudo).");
+             } else if (openErrno != 0) {
+diff --git a/src/driveformatthread.cpp b/src/driveformatthread.cpp
+index 4e3a55f..3398a55 100644
+--- a/src/driveformatthread.cpp
++++ b/src/driveformatthread.cpp
+@@ -7,6 +7,9 @@
+ #include "drivelist/drivelist.h"
+ #include "disk_formatter.h"
+ #include "platformquirks.h"
++#ifdef Q_OS_LINUX
++#include "linux/snap-udisks2.h"
++#endif
+ #include <QDebug>
+ #include <QProcess>
+ #include <QTemporaryFile>
+@@ -60,7 +63,7 @@ void DriveFormatThread::run()
+ 
+ #ifdef Q_OS_LINUX
+     // Linux-specific: Check permissions
+-    if (::access(_device.constData(), W_OK) != 0)
++    if (!SnapUDisks::active() && ::access(_device.constData(), W_OK) != 0)
+     {
+         emit error(tr("Cannot format device: insufficient permissions. Please run with elevated privileges (sudo)."));
+         return;
+diff --git a/src/linux/file_operations_linux.cpp b/src/linux/file_operations_linux.cpp
+index b20b9fb..8abf0b0 100644
+--- a/src/linux/file_operations_linux.cpp
++++ b/src/linux/file_operations_linux.cpp
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include "file_operations_linux.h"
++#include "snap-udisks2.h"
+ 
+ #include <fcntl.h>
+ #include <unistd.h>
+@@ -268,6 +269,12 @@ FileError LinuxFileOperations::OpenDevice(const std::string& path) {
+   // is rejected. extraFlags (e.g. O_EXCL) are preserved across that fallback.
+   auto tryOpenWithFlags = [&](int extraFlags) -> FileError {
+     int flags = O_RDWR | extraFlags;
++    if (isBlockDevice && SnapUDisks::active()) {
++      // Open once through the host, buffered initially. Direct I/O can be
++      // enabled on the same descriptor later, without reauthorization.
++      using_direct_io_ = false;
++      return OpenInternal(path.c_str(), flags);
++    }
+     // Track the O_DIRECT attempt locally: OpenInternal() starts with Close(),
+     // and Close() resets using_direct_io_, so the member is always false by the
+     // time the call returns. Branching on it here would make the buffered
+@@ -300,7 +307,7 @@ FileError LinuxFileOperations::OpenDevice(const std::string& path) {
+   // device), fall back to a shared open so the write still proceeds.
+   FileError result = tryOpenWithFlags(isBlockDevice ? O_EXCL : 0);
+   opened_exclusive_ = (result == FileError::kSuccess && isBlockDevice);
+-  if (result != FileError::kSuccess && isBlockDevice) {
++  if (result != FileError::kSuccess && isBlockDevice && !SnapUDisks::active()) {
+     int err = last_error_code_;
+     if (err == EBUSY || err == EACCES || err == EPERM) {
+       Log("Exclusive (O_EXCL) open failed with errno " + std::to_string(err) +
+@@ -429,6 +436,17 @@ FileError LinuxFileOperations::SetDirectIOEnabled(bool enabled) {
+     return FileError::kSuccess;
+   }
+   
++  if (SnapUDisks::active()) {
++    // Preserve the host-authorized descriptor and its exclusive lock.
++    const int flags = fcntl(fd_, F_GETFL);
++    if (flags < 0 || fcntl(fd_, F_SETFL, enabled ? (flags | O_DIRECT) : (flags & ~O_DIRECT)) < 0) {
++      last_error_code_ = errno;
++      return FileError::kOpenError;
++    }
++    using_direct_io_ = enabled;
++    return FileError::kSuccess;
++  }
++
+   // Save current position before reopening
+   off_t currentPos = lseek(fd_, 0, SEEK_CUR);
+   std::string savedPath = current_path_;
+@@ -485,7 +503,11 @@ FileError LinuxFileOperations::SetDirectIOEnabled(bool enabled) {
+ FileError LinuxFileOperations::OpenInternal(const char* path, int flags, mode_t mode) {
+   Close();
+ 
+-  fd_ = open(path, flags, mode);
++  struct stat st;
++  if (SnapUDisks::active() && stat(path, &st) == 0 && S_ISBLK(st.st_mode))
++    fd_ = SnapUDisks::openDevice(path, flags);
++  else
++    fd_ = open(path, flags, mode);
+   if (fd_ < 0) {
+     last_error_code_ = errno;
+     return FileError::kOpenError;
+diff --git a/src/linux/platformquirks_linux.cpp b/src/linux/platformquirks_linux.cpp
+index 0e4c8be..a09993b 100644
+--- a/src/linux/platformquirks_linux.cpp
++++ b/src/linux/platformquirks_linux.cpp
+@@ -12,6 +12,7 @@
+  */
+ 
+ #include "../platformquirks.h"
++#include "snap-udisks2.h"
+ #include "../userfiles.h"
+ #include <cstdlib>
+ #include <unistd.h>
+@@ -572,6 +573,10 @@ static bool isValidInterfaceName(const QString& name) {
+ }
+ 
+ bool hasNetworkConnectivity() {
++    // UDisks2 / sandbox active: sysfs operstate is restricted by sandbox profiles.
++    if (SnapUDisks::active())
++        return true;
++
+     // The cache is only as good as whatever invalidates it, and that is the
+     // netlink monitor. Without one running -- embedded mode never starts it --
+     // a cached "offline" taken before a slow PHY had its link stood for good,
+@@ -802,6 +807,10 @@ void bringWindowToForeground(void* windowHandle) {
+ }
+ 
+ bool hasElevatedPrivileges() {
++    // UDisks2 authorizes each device operation; the GUI needs no host root.
++    if (SnapUDisks::active())
++        return true;
++
+     // Check if running as root (UID 0)
+     return ::geteuid() == 0;
+ }
+@@ -836,6 +845,9 @@ const char* getBundlePath() {
+ }
+ 
+ bool isElevatableBundle() {
++    if (SnapUDisks::active())
++        return false;
++
+     const char* path = getBundlePath();
+     // Sanity check: verify the file actually exists
+     return path && access(path, F_OK) == 0;
+@@ -1780,6 +1792,9 @@ static bool mountIsOnDevice(const char* devicePath, const char* mountSource) {
+ }
+ 
+ DiskResult unmountDisk(const QString& device) {
++    if (SnapUDisks::active())
++        return SnapUDisks::unmountDevice(device) ? DiskResult::Success : DiskResult::Error;
++
+     QByteArray deviceBytes = device.toUtf8();
+     const char* devicePath = deviceBytes.constData();
+     
+diff --git a/src/linux/snap-udisks2.h b/src/linux/snap-udisks2.h
+new file mode 100644
+index 0000000..b4a6c4f
+--- /dev/null
++++ b/src/linux/snap-udisks2.h
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: Apache-2.0
++#pragma once
++
++#include <QDBusArgument>
++#include <QDBusConnection>
++#include <QDBusMessage>
++#include <QDBusMetaType>
++#include <QDBusObjectPath>
++#include <QDBusReply>
++#include <QDBusUnixFileDescriptor>
++#include <QDebug>
++#include <QMap>
++#include <QVariantMap>
++#include <cerrno>
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++namespace SnapUDisks {
++using Interfaces = QMap<QString, QVariantMap>;
++using Objects = QMap<QDBusObjectPath, Interfaces>;
++inline constexpr auto service = "org.freedesktop.UDisks2";
++inline constexpr auto blockInterface = "org.freedesktop.UDisks2.Block";
++inline constexpr auto partitionInterface = "org.freedesktop.UDisks2.Partition";
++inline constexpr auto filesystemInterface = "org.freedesktop.UDisks2.Filesystem";
++
++inline bool active() {
++    return qEnvironmentVariableIsSet("SNAP");
++}
++
++inline QDBusMessage call(const QString &path, const QString &interface,
++                         const QString &method, const QVariantList &arguments = {}) {
++    auto message = QDBusMessage::createMethodCall(service, path, interface, method);
++    message.setArguments(arguments);
++    message.setInteractiveAuthorizationAllowed(true);
++    // Allow time for the host's polkit authentication dialog.
++    return QDBusConnection::systemBus().call(message, QDBus::Block, 120000);
++}
++
++inline bool getObjects(Objects &objects) {
++    qDBusRegisterMetaType<Interfaces>();
++    qDBusRegisterMetaType<Objects>();
++    QDBusReply<Objects> reply = call("/org/freedesktop/UDisks2",
++        "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
++    if (!reply.isValid()) {
++        qWarning() << "UDisks2 enumeration failed:" << reply.error();
++        errno = EIO;
++        return false;
++    }
++    objects = reply.value();
++    return true;
++}
++
++inline QString findDevice(const Objects &objects, dev_t number) {
++    for (auto it = objects.cbegin(); it != objects.cend(); ++it) {
++        const auto properties = it.value().value(blockInterface);
++        if (properties.contains("DeviceNumber") &&
++            properties.value("DeviceNumber").toULongLong() == static_cast<qulonglong>(number))
++            return it.key().path();
++    }
++    return {};
++}
++
++inline bool belongsToDevice(const QString &path, const Interfaces &interfaces,
++                            const QString &device) {
++    return path == device ||
++        qvariant_cast<QDBusObjectPath>(interfaces.value(partitionInterface).value("Table")).path() == device;
++}
++
++inline int openObject(const QString &device, int flags) {
++    // Keep exclusive access: never retry a denied/busy request as a shared open.
++    QVariantMap options{{"flags", (flags & ~O_ACCMODE) | O_CLOEXEC}};
++    QDBusReply<QDBusUnixFileDescriptor> reply = call(device, blockInterface,
++        "OpenDevice", {QStringLiteral("rw"), options});
++    if (!reply.isValid()) {
++        qWarning() << "UDisks2 could not open" << device << reply.error();
++        // Treat failed authorization as final, including when the user cancels.
++        errno = ECANCELED;
++        return -1;
++    }
++    // Own our descriptor independently of the lifetime of the D-Bus reply.
++    const int fd = ::fcntl(reply.value().fileDescriptor(), F_DUPFD_CLOEXEC, 0);
++    if (fd < 0)
++        return -1;
++    return fd;
++}
++
++inline int openDevice(const char *path, int flags) {
++    struct stat st;
++    if (::stat(path, &st) != 0)
++        return -1;
++    if (!S_ISBLK(st.st_mode)) {
++        errno = ENOTBLK;
++        return -1;
++    }
++    Objects objects;
++    if (!getObjects(objects))
++        return -1;
++    const auto device = findDevice(objects, st.st_rdev);
++    if (device.isEmpty()) {
++        errno = ENODEV;
++        return -1;
++    }
++    const int fd = openObject(device, flags);
++    if (fd < 0)
++        return -1;
++    struct stat opened;
++    if (::fstat(fd, &opened) != 0 || !S_ISBLK(opened.st_mode) || opened.st_rdev != st.st_rdev) {
++        ::close(fd);
++        errno = ENODEV;
++        return -1;
++    }
++    return fd;
++}
++
++inline bool unmountObjects(const Objects &objects, const QString &device) {
++    // Use host objects, since /proc/mounts only describes the sandbox's mounts.
++    // Partition.Table avoids prefix collisions (sda/sdaa, mmcblk1/mmcblk10).
++    for (auto it = objects.cbegin(); it != objects.cend(); ++it) {
++        if (!belongsToDevice(it.key().path(), it.value(), device) ||
++            !it.value().contains(filesystemInterface))
++            continue;
++        const auto reply = call(it.key().path(), filesystemInterface,
++            "Unmount", {QVariantMap{}});
++        if (reply.type() == QDBusMessage::ErrorMessage &&
++            reply.errorName() != "org.freedesktop.UDisks2.Error.NotMounted") {
++            qWarning() << "UDisks2 unmount failed:" << reply.errorName() << reply.errorMessage();
++            return false;
++        }
++    }
++    return true;
++}
++
++inline bool unmountDevice(const QString &path) {
++    struct stat st;
++    if (::stat(path.toUtf8().constData(), &st) != 0)
++        return false;
++    // Image-file output needs no host unmount operation.
++    if (S_ISREG(st.st_mode))
++        return true;
++    if (!S_ISBLK(st.st_mode))
++        return false;
++    Objects objects;
++    if (!getObjects(objects))
++        return false;
++    const auto device = findDevice(objects, st.st_rdev);
++    if (device.isEmpty())
++        return false;
++    return unmountObjects(objects, device);
++}
++
++} // namespace SnapUDisks

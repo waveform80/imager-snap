@@ -1,0 +1,13 @@
+diff --git a/src/main.cpp b/src/main.cpp
+index ba12dea..e1a3860 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -397,6 +397,8 @@ int main(int argc, char *argv[])
+ 
+     app.setOrganizationName("Raspberry Pi");
+     app.setOrganizationDomain("raspberrypi.com");
++    if (!qEnvironmentVariableIsEmpty("SNAP_INSTANCE_NAME"))
++        app.setDesktopFileName(qEnvironmentVariable("SNAP_INSTANCE_NAME") + QStringLiteral("_rpi-imager"));
+     app.setApplicationName("Raspberry Pi Imager");
+     app.setApplicationVersion(ImageWriter::staticVersion());
+     {
